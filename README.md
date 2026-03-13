@@ -4,9 +4,9 @@ An end-to-end analytics engineering project that ingests NYC Taxi trip
 data, transforms it into analytics-ready models using dbt, and organizes
 it into warehouse-style datasets for downstream reporting and analysis.
 
-This project demonstrates a **warehouse-first analytics workflow**
-including ingestion, transformation layers, dimensional modeling, and
-data quality testing.
+This project demonstrates a warehouse-first analytics workflow including
+ingestion, transformation layers, dimensional modeling, and data quality
+testing.
 
 ------------------------------------------------------------------------
 
@@ -14,40 +14,25 @@ data quality testing.
 
 The pipeline follows a layered analytics engineering design.
 
-NYC Taxi Dataset
-        │
-        ▼
-Python Ingestion Script
-        │
-        ▼
-DuckDB Raw Table
-(raw_taxi_trips)
-        │
-        ▼
-dbt Staging Layer
-(stg_taxi_trips)
-        │
-        ▼
-dbt Intermediate Layer
-(int_trip_metrics)
-        │
-        ▼
-dbt Mart Layer
-fact_trips
-dim_date
+NYC Taxi Dataset │ ▼ Python Ingestion Scripts (load_taxi_data.py,
+load_taxi_zones.py) │ ▼ DuckDB Warehouse raw_taxi_trips raw_taxi_zones │
+▼ dbt Staging Layer stg_taxi_trips stg_taxi_zones │ ▼ dbt Intermediate
+Layer int_trip_metrics │ ▼ Analytics Mart Layer fact_trips dim_date
+dim_location
 
-Each layer has a specific responsibility.
+Each layer has a specific responsibility:
 
-**Raw layer** Stores ingested source data without heavy transformation.
+Raw layer\
+Stores ingested source data without heavy transformation.
 
-**Staging layer** Standardizes column names, types, and removes
-inconsistencies.
+Staging layer\
+Standardizes column names and prepares datasets for transformation.
 
-**Intermediate layer** Creates derived metrics and reusable business
-logic.
+Intermediate layer\
+Creates reusable metrics and derived business logic.
 
-**Mart layer** Produces analytics-ready datasets designed for reporting
-and dashboarding.
+Mart layer\
+Produces analytics-ready fact and dimension tables.
 
 ------------------------------------------------------------------------
 
@@ -55,8 +40,8 @@ and dashboarding.
 
 Programming: Python\
 Data Warehouse: DuckDB\
-Transformation: dbt\
-Data Quality: dbt tests\
+Transformation Layer: dbt\
+Data Quality Testing: dbt tests\
 Version Control: Git / GitHub\
 Dataset: NYC Taxi Trip Records
 
@@ -66,14 +51,16 @@ Dataset: NYC Taxi Trip Records
 
 Source data comes from the NYC Taxi & Limousine Commission.
 
-Dataset used: NYC Yellow Taxi Trip Records (January 2025)
+Dataset used:
+
+NYC Yellow Taxi Trip Records (January 2025)
 
 The dataset contains millions of trip records including:
 
 -   pickup and dropoff timestamps
 -   trip distance
 -   passenger counts
--   payment information
+-   payment type
 -   location identifiers
 -   revenue metrics
 
@@ -81,70 +68,61 @@ The dataset contains millions of trip records including:
 
 # Data Models
 
-## Staging Layer
+## Fact Table
 
-**stg_taxi_trips**
+fact_trips
 
-Standardizes raw ingestion data by: - renaming columns - selecting
-relevant fields - preparing the dataset for transformation
-
-------------------------------------------------------------------------
-
-## Intermediate Layer
-
-**int_trip_metrics**
-
-Adds derived metrics including:
-
--   trip duration
--   trip date
--   pickup hour
--   revenue per mile
-
-------------------------------------------------------------------------
-
-## Mart Layer
-
-**fact_trips**
-
-Main analytics table containing trip metrics used for reporting and
-analysis.
-
-Fields include:
+Primary analytics dataset containing trip-level metrics including:
 
 -   trip date
 -   pickup hour
--   pickup and dropoff location
+-   pickup and dropoff locations
 -   passenger count
 -   trip distance
--   revenue metrics
+-   fare amount
+-   tip amount
+-   total revenue
+-   trip duration
 
-------------------------------------------------------------------------
+## Dimension Tables
 
-**dim_date**
+dim_date
 
-Date dimension enabling time-based analysis such as:
+Calendar dimension supporting time-based analysis including:
 
 -   year
 -   month
 -   day
--   day of week
+-   weekday
+
+dim_location
+
+Taxi zone dimension including:
+
+-   borough
+-   zone name
+-   service area
 
 ------------------------------------------------------------------------
 
 # Data Quality
 
-Data quality checks are implemented using **dbt tests**.
+Data quality checks are implemented using dbt tests.
 
 Examples include:
 
--   `not_null` tests for critical fields
--   `unique` constraints for dimension keys
--   validation of required analytical fields
+-   not_null tests on critical fields
+-   unique tests on dimension keys
+-   referential integrity tests between fact and dimension tables
 
-Tests are executed using:
+Run tests using:
 
 dbt test
+
+Current project metrics:
+
+-   6 dbt models
+-   14 data quality tests
 
 ------------------------------------------------------------------------
 
@@ -162,17 +140,17 @@ python3.12 -m venv .venv source .venv/bin/activate
 
 pip install -r requirements.txt
 
-## 4. Run ingestion pipeline
+## 4. Load source datasets
 
-python ingestion/load_taxi_data.py
+python ingestion/load_taxi_data.py\
+python ingestion/load_taxi_zones.py
 
-This loads the NYC Taxi dataset into DuckDB.
+## 5. Build warehouse models
 
-## 5. Run dbt models
+cd taxi_analytics\
+dbt run
 
-cd taxi_analytics dbt run
-
-## 6. Run data quality tests
+## 6. Run data quality checks
 
 dbt test
 
@@ -180,46 +158,21 @@ dbt test
 
 # Example Analytical Questions
 
-The curated datasets enable analysis such as:
+The curated warehouse enables analysis such as:
 
+-   Which pickup zones generate the highest revenue?
 -   What hours of the day have the highest taxi demand?
--   Which pickup locations generate the highest revenue?
--   What is the average revenue per mile for taxi trips?
--   How do passenger counts affect trip distance and fare?
-
-------------------------------------------------------------------------
-
-# Future Improvements
-
-Planned enhancements include:
-
--   orchestration using Apache Airflow
--   additional dimensional models for taxi zones
--   dashboarding layer for interactive analytics
--   cloud warehouse deployment
+-   What borough produces the highest trip volume?
+-   What is the average revenue per mile by day of week?
 
 ------------------------------------------------------------------------
 
 # Repository Structure
 
-mobility-data-platform
-│
-├── ingestion/
-│   └── load_taxi_data.py
-│
-├── taxi_analytics/
-│   ├── models/
-│   │   ├── staging/
-│   │   ├── intermediate/
-│   │   └── marts/
-│   │
-│   └── dbt_project.yml
-│
-├── data/
-├── screenshots/
-├── docs/
-├── requirements.txt
-└── README.md
+mobility-data-platform │ ├── ingestion/ │ ├── load_taxi_data.py │ └──
+load_taxi_zones.py │ ├── taxi_analytics/ │ ├── models/ │ │ ├── staging/
+│ │ ├── intermediate/ │ │ └── marts/ │ │ │ └── dbt_project.yml │ ├──
+data/ ├── docs/ ├── screenshots/ ├── requirements.txt └── README.md
 
 ------------------------------------------------------------------------
 
@@ -229,9 +182,9 @@ This project demonstrates core analytics engineering concepts:
 
 -   warehouse-first transformation design
 -   layered dbt modeling
--   dimensional analytics structures
+-   fact and dimension tables
 -   data quality validation
 -   reproducible data pipelines
 
-It is intended as a learning project for modern analytics engineering
-workflows.
+The goal is to demonstrate modern analytics engineering workflows using
+Python, DuckDB, and dbt.
