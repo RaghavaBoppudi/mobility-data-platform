@@ -154,6 +154,18 @@ dbt run
 
 dbt test
 
+## 7. Pipeline Orchestration
+
+The project includes a simple orchestration script that runs the full pipeline:
+
+python pipeline/run_pipeline.py
+
+This executes:
+
+1. Data ingestion scripts
+2. dbt model builds
+3. dbt data quality tests
+
 ------------------------------------------------------------------------
 
 # Example Analytical Questions
