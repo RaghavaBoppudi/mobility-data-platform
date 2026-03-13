@@ -14,9 +14,26 @@ data quality testing.
 
 The pipeline follows a layered analytics engineering design.
 
-NYC Taxi Dataset │ ▼ Python Ingestion Script │ ▼ DuckDB Raw Table
-(raw_taxi_trips) │ ▼ dbt Staging Layer (stg_taxi_trips) │ ▼ dbt
-Intermediate Layer (int_trip_metrics) │ ▼ dbt Mart Layer fact_trips
+NYC Taxi Dataset
+        │
+        ▼
+Python Ingestion Script
+        │
+        ▼
+DuckDB Raw Table
+(raw_taxi_trips)
+        │
+        ▼
+dbt Staging Layer
+(stg_taxi_trips)
+        │
+        ▼
+dbt Intermediate Layer
+(int_trip_metrics)
+        │
+        ▼
+dbt Mart Layer
+fact_trips
 dim_date
 
 Each layer has a specific responsibility.
@@ -185,10 +202,24 @@ Planned enhancements include:
 
 # Repository Structure
 
-mobility-data-platform │ ├── ingestion/ │ └── load_taxi_data.py │ ├──
-taxi_analytics/ │ ├── models/ │ │ ├── staging/ │ │ ├── intermediate/ │ │
-└── marts/ │ │ │ └── dbt_project.yml │ ├── data/ ├── screenshots/ ├──
-docs/ ├── requirements.txt └── README.md
+mobility-data-platform
+│
+├── ingestion/
+│   └── load_taxi_data.py
+│
+├── taxi_analytics/
+│   ├── models/
+│   │   ├── staging/
+│   │   ├── intermediate/
+│   │   └── marts/
+│   │
+│   └── dbt_project.yml
+│
+├── data/
+├── screenshots/
+├── docs/
+├── requirements.txt
+└── README.md
 
 ------------------------------------------------------------------------
 
