@@ -33,3 +33,10 @@ models:
       - name: total_amount
         tests:
           - not_null
+
+  - name: dim_date
+    columns:
+      - name: date_day
+        tests:
+          - unique
+          - not_null
