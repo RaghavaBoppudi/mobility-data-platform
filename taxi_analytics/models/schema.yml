@@ -9,13 +9,19 @@ models:
       - name: dropoff_datetime
         tests:
           - not_null
-      - name: pickup_location_id
-        tests:
-          - not_null
-      - name: dropoff_location_id
-        tests:
-          - not_null
+  - name: pickup_location_id
+    tests:
+      - relationships:
+          arguments:
+            to: ref('dim_location')
+            field: location_id
 
+  - name: dropoff_location_id
+    tests:
+      - relationships:
+          arguments:
+            to: ref('dim_location')
+            field: location_id
   - name: int_trip_metrics
     columns:
       - name: trip_date
@@ -27,12 +33,25 @@ models:
 
   - name: fact_trips
     columns:
-      - name: trip_date
-        tests:
-          - not_null
-      - name: total_amount
-        tests:
-          - not_null
+    - name: trip_date
+      tests:
+        - not_null
+
+    - name: total_amount
+      tests:
+        - not_null
+
+    - name: pickup_location_id
+      tests:
+        - relationships:
+            to: ref('dim_location')
+            field: location_id
+
+    - name: dropoff_location_id
+      tests:
+        - relationships:
+            to: ref('dim_location')
+            field: location_id
 
   - name: dim_date
     columns:
@@ -46,3 +65,4 @@ models:
         tests:
           - unique
           - not_null
+
